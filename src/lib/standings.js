@@ -32,8 +32,10 @@ export function cardOffCompare(a, b, holes) {
 
 // Returns rounds in final order with place, net, gross, points, money,
 // and a note when a card off decided the place.
+// Guests (isGuest) are excluded from the rankings entirely.
 export function computeStandings(rounds, holes, points = [], payouts = []) {
-  const withTotals = rounds.map((r) => ({
+  const eligible = rounds.filter((r) => !r.isGuest);
+  const withTotals = eligible.map((r) => ({
     ...r,
     gross: grossTotal(r.scores),
     net: netTotal(r),

@@ -175,5 +175,54 @@ function mkRound(name, hcp, scores, group = 1) {
   assert(kpScoreWarnings(entries2, [round], holes).length === 0, 'no warning when consistent');
 }
 
+// === Guests: excluded from standings ===
+{
+  const a = mkRound('Alice', 10, evenRound());
+  const g = { ...mkRound('Guest', 0, evenRound()), isGuest: true, playsSkins: true, playsKp: true };
+  const sb = evenRound(); sb[0] += 1;
+  const b = mkRound('Bob', 10, sb);
+  const st = computeStandings([a, g, b], holes, [475, 245], [110, 66]);
+  assertEq(st.map((r) => r.playerName), ['Alice', 'Bob'], 'guest excluded from standings');
+  assertEq(st.map((r) => r.place), [1, 2], 'places skip no one (guest not counted)');
+}
+
+// === Guests: in skins when opted in, even with partial scores ===
+{
+  const sa = evenRound(); sa[0] = 3; // Alice birdie hole 1
+  const gScores = Array(18).fill(0); gScores[0] = 3; // guest birdie hole 1 only entered
+  const a = mkRound('Alice', 0, sa);
+  const g = { ...mkRound('Guest', 0, gScores), isGuest: true, playsSkins: true, playsKp: false };
+  const { skins } = computeSkins([a, g], holes, 100);
+  assert(skins.length === 0, 'guest birdie cancels league birdie when guest plays skins');
+}
+
+// === Guests: NOT in skins when opted out ===
+{
+  const sa = evenRound(); sa[0] = 3; // Alice birdie hole 1
+  const gScores = Array(18).fill(0); gScores[0] = 3;
+  const a = mkRound('Alice', 0, sa);
+  const g = { ...mkRound('Guest', 0, gScores), isGuest: true, playsSkins: false, playsKp: true };
+  const { skins } = computeSkins([a, g], holes, 100);
+  assertEq(skins.map((s) => [s.holeNumber, s.playerName]), [[1, 'Alice']], 'opted-out guest does not cancel skins');
+}
+
+// === Guests: can win a skin ===
+{
+  const a = mkRound('Alice', 0, evenRound());
+  const gScores = Array(18).fill(0); gScores[9] = 2; // guest eagle hole 10
+  const g = { ...mkRound('Guest', 0, gScores), isGuest: true, playsSkins: true, playsKp: true };
+  const { skins, payouts } = computeSkins([a, g], holes, 100);
+  assertEq(skins.map((s) => [s.holeNumber, s.playerName]), [[10, 'Guest']], 'guest wins skin');
+  assertEq(payouts.map((p) => [p.playerName, p.money]), [['Guest', 100]], 'guest gets skins payout');
+}
+
+// === Guests: league members always in skins regardless of flags ===
+{
+  const sa = evenRound(); sa[0] = 3;
+  const a = { ...mkRound('Alice', 0, sa), playsSkins: false }; // flag ignored for members
+  const { skins } = computeSkins([a], holes, 100);
+  assertEq(skins.map((s) => s.playerName), ['Alice'], 'member always in skins');
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

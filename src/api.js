@@ -62,6 +62,9 @@ export async function saveRound(round) {
     course_handicap: round.course_handicap,
     group_number: round.group_number,
     scores: round.scores,
+    is_guest: !!round.is_guest,
+    plays_skins: round.plays_skins !== false,
+    plays_kp: round.plays_kp !== false,
   };
   if (round.id) {
     return check(await supabase.from('rounds').update(row).eq('id', round.id).select().single());

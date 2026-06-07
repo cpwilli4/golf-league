@@ -44,6 +44,9 @@ export default function EventPage({ eventId, canEdit }) {
     courseHandicap: r.course_handicap,
     groupNumber: r.group_number,
     scores: r.scores,
+    isGuest: !!r.is_guest,
+    playsSkins: r.plays_skins !== false,
+    playsKp: r.plays_kp !== false,
   }));
 
   const engineKps = kpEntries.map((e) => ({

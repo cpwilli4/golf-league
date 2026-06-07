@@ -83,9 +83,11 @@ export default function KPTab({ event, course, rounds, kpEntries, players, onCha
   }
 
   // Players in a group (from entered rounds) listed first for convenience.
+  // Guests who didn't buy into KPs are excluded.
   function playerOptions(group) {
+    const kpIneligible = rounds.filter((r) => r.isGuest && !r.playsKp).map((r) => r.playerId);
     const inGroup = rounds.filter((r) => r.groupNumber === group).map((r) => r.playerId);
-    const sorted = [...players].sort((a, b) => {
+    const sorted = [...players].filter((p) => !kpIneligible.includes(p.id)).sort((a, b) => {
       const ag = inGroup.includes(a.id) ? 0 : 1;
       const bg = inGroup.includes(b.id) ? 0 : 1;
       return ag - bg || a.name.localeCompare(b.name);

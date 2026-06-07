@@ -59,6 +59,18 @@ export default function ResultsTab({ event, course, rounds, kpEntries }) {
       {standings.some((r) => r.cardOff) && (
         <p className="muted">* Tie broken by card off (gross scores on handicap holes, starting at the #1 handicap hole).</p>
       )}
+      {rounds.some((r) => r.isGuest) && (
+        <p className="muted">
+          Guests (not ranked):{' '}
+          {rounds
+            .filter((r) => r.isGuest)
+            .map((r) => {
+              const games = [r.playsSkins ? 'skins' : null, r.playsKp ? 'KP' : null].filter(Boolean).join(' + ');
+              return `${r.playerName}${games ? ` (${games})` : ''}`;
+            })
+            .join(', ')}
+        </p>
+      )}
 
       {/* ---- Skins ---- */}
       <h2>Skins</h2>

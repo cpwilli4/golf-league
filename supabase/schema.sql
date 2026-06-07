@@ -40,8 +40,12 @@ create table rounds (
   tee text not null,
   course_handicap int not null,
   group_number int,
-  -- 18 hole scores: [4, 5, 3, ...]
+  -- 18 hole scores: [4, 5, 3, ...] (0 = not entered, allowed for guests)
   scores jsonb not null,
+  -- guests are excluded from standings; they can opt into money games
+  is_guest boolean not null default false,
+  plays_skins boolean not null default true,
+  plays_kp boolean not null default true,
   created_at timestamptz default now(),
   unique (event_id, player_id)
 );

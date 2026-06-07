@@ -6,8 +6,15 @@
 // - Two birdies (with no eagle) cancel: no skin.
 // - Skins pot splits evenly across the number of PLAYERS who won at least
 //   one skin (not the number of skins).
+// - League members are always in. Guests are included only if they bought
+//   into skins (playsSkins).
 
-export function computeSkins(rounds, holes, skinsPot = 0) {
+function skinsField(rounds) {
+  return rounds.filter((r) => !r.isGuest || r.playsSkins);
+}
+
+export function computeSkins(allRounds, holes, skinsPot = 0) {
+  const rounds = skinsField(allRounds);
   const skins = []; // { holeNumber, par, playerId, playerName, score }
 
   for (const hole of holes) {
@@ -47,7 +54,8 @@ export function computeSkins(rounds, holes, skinsPot = 0) {
 // Per-group skins sheet view, mirroring the paper sheet:
 // for each hole and group, the name of the player with the group's best
 // score IF it's birdie-or-better and unique within the group; else blank.
-export function groupSkinsSheet(rounds, holes, groupNumbers) {
+export function groupSkinsSheet(allRounds, holes, groupNumbers) {
+  const rounds = skinsField(allRounds);
   return holes.map((hole) => {
     const idx = hole.number - 1;
     const row = { holeNumber: hole.number, par: hole.par, groups: {} };
