@@ -3,6 +3,7 @@ import { getEventFull, listPlayers } from '../api.js';
 import ScoresTab from './ScoresTab.jsx';
 import KPTab from './KPTab.jsx';
 import ResultsTab from './ResultsTab.jsx';
+import EventSettingsTab from './EventSettingsTab.jsx';
 
 export default function EventPage({ eventId, canEdit }) {
   const [data, setData] = useState(null); // { event, rounds, kpEntries }
@@ -66,6 +67,7 @@ export default function EventPage({ eventId, canEdit }) {
           <>
             <button className={tab === 'scores' ? 'tab active' : 'tab'} onClick={() => setTab('scores')}>Score entry</button>
             <button className={tab === 'kp' ? 'tab active' : 'tab'} onClick={() => setTab('kp')}>KP sheet</button>
+            <button className={tab === 'settings' ? 'tab active' : 'tab'} onClick={() => setTab('settings')}>Event settings</button>
           </>
         )}
         <button className={tab === 'results' ? 'tab active' : 'tab'} onClick={() => setTab('results')}>Results</button>
@@ -76,6 +78,9 @@ export default function EventPage({ eventId, canEdit }) {
       )}
       {tab === 'kp' && canEdit && (
         <KPTab event={event} course={course} rounds={engineRounds} kpEntries={kpEntries} players={players} onChanged={refresh} />
+      )}
+      {tab === 'settings' && canEdit && (
+        <EventSettingsTab event={event} onChanged={refresh} />
       )}
       {tab === 'results' && (
         <ResultsTab event={event} course={course} rounds={engineRounds} kpEntries={engineKps} />
