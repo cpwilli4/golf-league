@@ -14,7 +14,7 @@ export default function ResultsTab({ event, course, rounds, kpEntries }) {
   const par3Numbers = holes.filter((h) => h.par === 3).map((h) => h.number);
 
   const standings = computeStandings(rounds, holes, event.points || [], event.payouts || []);
-  const { skins, payouts: skinPayouts, perPlayer } = computeSkins(rounds, holes, event.skins_pot || 0);
+  const { skins, payouts: skinPayouts, perSkin } = computeSkins(rounds, holes, event.skins_pot || 0);
   const sheet = groupSkinsSheet(rounds, holes, groups.map((g) => g.number));
   const kp = computeKPs(kpEntries, par3Numbers, event.kp_pot || 0);
 
@@ -103,8 +103,8 @@ export default function ResultsTab({ event, course, rounds, kpEntries }) {
             </tbody>
           </table>
           <p className="muted">
-            Skins pot {money(event.skins_pot)} split across {skinPayouts.length}{' '}
-            {skinPayouts.length === 1 ? 'player' : 'players'} = {money(perPlayer)} each.
+            Skins pot {money(event.skins_pot)} split across {skins.length}{' '}
+            {skins.length === 1 ? 'skin' : 'skins'} = {money(perSkin)} per skin.
           </p>
         </>
       )}

@@ -54,7 +54,7 @@ That's it. Bookmark the URL on your phone.
 
 - Net = gross minus course handicap. Lowest net wins.
 - Ties broken by card off on gross scores: #1 handicap hole, then #2, and so on. Works for any number of tied players and always produces an outright order.
-- Skins: birdie or better, unique lowest score on the hole across the whole field. Pot splits evenly across the players who won at least one skin.
+- Skins: birdie or better, unique lowest score on the hole across the whole field. Pot splits evenly across the total number of skins won, so a player who wins 2 skins gets 2 shares.
 - KP: shortest measured distance across all groups per par 3. Pot splits evenly across par 3s that have a winner. A winner who missed par forfeits their share to the hole-in-one fund (the split doesn't change).
 
 ## Making changes later

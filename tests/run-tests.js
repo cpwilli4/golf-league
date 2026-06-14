@@ -97,20 +97,21 @@ function mkRound(name, hcp, scores, group = 1) {
   const a = mkRound('Alice', 0, sa, 1);
   const b = mkRound('Bob', 0, sb, 1);
   const c = mkRound('Carl', 0, sc, 2);
-  const { skins, payouts, perPlayer } = computeSkins([a, b, c], holes, 120);
+  const { skins, payouts, perSkin } = computeSkins([a, b, c], holes, 120);
   assertEq(skins.map((s) => [s.holeNumber, s.playerName]), [[1, 'Alice'], [10, 'Bob']], 'skins: unique birdie + eagle, canceled birdies');
-  assert(perPlayer === 60, 'pot split per player (120/2)');
+  assert(perSkin === 60, 'pot split per skin (120/2)');
   assertEq(payouts.map((p) => [p.playerName, p.skinsWon, p.money]), [['Alice', 1, 60], ['Bob', 1, 60]], 'skins payouts');
 }
 
-// === Skins: pot splits per PLAYER, not per skin ===
+// === Skins: pot splits per SKIN, so 2 skins earns 2 shares ===
 {
-  const sa = evenRound(); sa[0] = 3; sa[1] = 3; // Alice 2 birdies
+  const sa = evenRound(); sa[0] = 3; sa[1] = 3; // Alice 2 birdies (unique)
   const sb = evenRound(); sb[2] = 3;            // Bob 1 birdie
   const a = mkRound('Alice', 0, sa);
   const b = mkRound('Bob', 0, sb);
-  const { payouts } = computeSkins([a, b], holes, 120);
-  assertEq(payouts.map((p) => [p.playerName, p.skinsWon, p.money]), [['Alice', 2, 60], ['Bob', 1, 60]], 'even split across winning players');
+  const { perSkin, payouts } = computeSkins([a, b], holes, 120);
+  assert(perSkin === 40, 'pot split per skin (120/3)');
+  assertEq(payouts.map((p) => [p.playerName, p.skinsWon, p.money]), [['Alice', 2, 80], ['Bob', 1, 40]], 'per-skin payout: 2 skins = 2 shares');
 }
 
 // === Skins: par is never a skin even if unique lowest ===

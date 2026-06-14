@@ -4,8 +4,8 @@
 // - A skin requires birdie or better (score below par).
 // - The score must be the UNIQUE lowest on that hole across the entire field.
 // - Two birdies (with no eagle) cancel: no skin.
-// - Skins pot splits evenly across the number of PLAYERS who won at least
-//   one skin (not the number of skins).
+// - Skins pot splits evenly across the total number of SKINS won. A player
+//   who wins 2 skins gets 2 shares.
 // - League members are always in. Guests are included only if they bought
 //   into skins (playsSkins).
 
@@ -39,16 +39,20 @@ export function computeSkins(allRounds, holes, skinsPot = 0) {
   }
 
   const winnerIds = [...new Set(skins.map((s) => s.playerId))];
-  const perPlayer = winnerIds.length > 0 ? skinsPot / winnerIds.length : 0;
+  // Split the pot by the total number of skins won, not the number of players.
+  const perSkin = skins.length > 0 ? skinsPot / skins.length : 0;
 
-  const payouts = winnerIds.map((id) => ({
-    playerId: id,
-    playerName: skins.find((s) => s.playerId === id).playerName,
-    skinsWon: skins.filter((s) => s.playerId === id).length,
-    money: perPlayer,
-  }));
+  const payouts = winnerIds.map((id) => {
+    const skinsWon = skins.filter((s) => s.playerId === id).length;
+    return {
+      playerId: id,
+      playerName: skins.find((s) => s.playerId === id).playerName,
+      skinsWon,
+      money: perSkin * skinsWon,
+    };
+  });
 
-  return { skins, payouts, perPlayer };
+  return { skins, payouts, perSkin };
 }
 
 // Per-group skins sheet view, mirroring the paper sheet:
